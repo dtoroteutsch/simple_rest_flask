@@ -25,7 +25,14 @@ def get_courses():
     #select * from courses;
     courses = Course.select()
     courses = [course.to_json() for course in courses]
-    return jsonify(courses)
+    return jsonify(generate_response(data=courses))
+
+def generate_response(status=200, data=None, error=None):
+    return {
+        'status': 200,
+        'data': data,
+        'error': error
+        }
 
 if __name__ == '__main__':
     initialize()
