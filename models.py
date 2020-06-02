@@ -21,6 +21,13 @@ class Course(Model):
     description = TextField()
     createdAt = DateTimeField(default=datetime.datetime.now())
 
+    def to_json(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description
+            }
+
 def create_course():
     title = 'Flask Course'
     description = 'Free flask course'
