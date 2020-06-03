@@ -67,6 +67,14 @@ def put_course(course_id):
     else:
         abort(422)
 
+@app.route('/rest/api/v1.0/courses/<int:course_id>', methods=['DELETE'])
+def delete_course(course_id):
+    course = get_course(course_id)
+    if course.delete_instance():
+        return jsonify(generate_response(data={}))
+    else:
+        abort(422)
+
 def get_course(course_id):
     try:
         #select * from courses where courses.id = course_id
