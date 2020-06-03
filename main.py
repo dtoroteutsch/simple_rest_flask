@@ -55,6 +55,18 @@ def post_course():
         abort(422)
     return jsonify(generate_response(data=course.to_json()))
 
+@app.route('/rest/api/v1.0/courses/<int:course_id>', methods=['PUT'])
+def put_course(course_id):
+    course = get_course(course_id)
+    if not request.json:
+        abort(400)
+    course.title = request.json.get('title', course.title)
+    course.description = request.json.get('description', course.description)
+    if course.save():
+        return jsonify(generate_response(data=course.to_json()))
+    else:
+        abort(422)
+
 def get_course(course_id):
     try:
         #select * from courses where courses.id = course_id
