@@ -28,6 +28,14 @@ class Course(Model):
             'description': self.description
             }
 
+    @classmethod
+    def new(cls, title, description):
+        try:
+            return cls.create(title=title, description=description)
+        except IntegrityError:
+            print('Integrity Error')
+            return None
+
 def create_course():
     title = 'Flask Course'
     description = 'Free flask course'

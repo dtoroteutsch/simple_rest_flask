@@ -1,4 +1,4 @@
-from flask import Flask, g, jsonify, abort
+from flask import Flask, g, jsonify, abort, request
 
 from models import initialize
 from models import Course
@@ -24,6 +24,14 @@ def after_request(request):
 def not_found(error):
     return jsonify(generate_response(404, error='Resource not found'))
 
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify(generate_response(400, error='It is necessary define the parameters'))
+
+@app.errorhandler(422)
+def unprocessable_entity(error):
+    return jsonify(generate_response(422, error='Unprocessable entity'))
+
 @app.route('/rest/api/v1.0/courses', methods=['GET'])
 def get_courses():
     #select * from courses;
@@ -36,6 +44,17 @@ def show_course(course_id):
     course = get_course(course_id)
     return jsonify(generate_response(data=course.to_json()))
 
+@app.route('/rest/api/v1.0/courses/', methods=['POST'])
+def post_course():
+    if not request.json:
+        abort(400)
+    title = request.json.get('title', '')
+    description = request.json.get('description', '')
+    course = Course.new(title, description)
+    if course is None:
+        abort(422)
+    return jsonify(generate_response(data=course.to_json()))
+
 def get_course(course_id):
     try:
         #select * from courses where courses.id = course_id
@@ -45,7 +64,7 @@ def get_course(course_id):
 
 def generate_response(status=200, data=None, error=None):
     return {
-        'status': 200,
+        'status': status,
         'data': data,
         'error': error
         }
